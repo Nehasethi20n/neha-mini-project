@@ -1,7 +1,6 @@
 import { DataTypes, Model, Optional, Association, Sequelize } from 'sequelize';
 import db from '../config/db';
 
-export default(sequelize:Sequelize, DataTypes:any)=>{
   class User extends Model {
     public id!: number;
     public firstName!: string;
@@ -36,10 +35,10 @@ export default(sequelize:Sequelize, DataTypes:any)=>{
       },
     },
     {
-      sequelize,
+      sequelize:db,
       modelName: "User",
+      tableName:"user",
+      timestamps:false
     }
   );
-  
-return  User;
-  };
+export default User;

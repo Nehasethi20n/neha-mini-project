@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional, Association, Sequelize } from 'sequelize';
-export default(sequelize:Sequelize, DataTypes:any)=>{
+import db from '../config/db';
   class Order extends Model{
     public order_id!:number;
     public user_id!:number;
@@ -7,7 +7,7 @@ export default(sequelize:Sequelize, DataTypes:any)=>{
   }
   Order.init(
     {
-      order_id:{
+      id:{
         type:DataTypes.INTEGER,
         primaryKey:true,
        autoIncrement:true
@@ -18,7 +18,7 @@ export default(sequelize:Sequelize, DataTypes:any)=>{
        references:
        {
         model:"User",
-        key:"userid"
+        key:"id"
        }
       },
       amount:
@@ -27,9 +27,10 @@ export default(sequelize:Sequelize, DataTypes:any)=>{
       }
       },
       {
-        sequelize,
-        modelName:'order'
+        sequelize:db,
+        modelName: "Order",
+        tableName:"order",
+        timestamps:false
       }
   );
-    return  Order;
-};
+export default Order;

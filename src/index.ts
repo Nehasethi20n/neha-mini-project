@@ -1,18 +1,11 @@
 import express from 'express';
+import { Request, Response } from "express";
 import { Sequelize } from 'sequelize';
+import User from './routes/user_routes';
+import Order from './routes/order_routes';
+import UserModel from './model/user'
+import { getUser } from './controller/usercontroller';
 
-const db= new Sequelize('user_database', 'root', 'Neha_sethi20', {
-  host: 'localhost',
-  dialect: 'mysql'
-});
-
-db.authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully.');
-  })
-  .catch((error) => {
-    console.error('Unable to connect to the database:', error);
-  });
 const app = express();
 const PORT = 3000;
 
@@ -25,4 +18,7 @@ app.listen(PORT, () => {
 app.get('/', (req, res) => {
   res.send('Welcome to my page');
 });
+//app.get('/api/users',getUser);
+app.use('/api/users',User);
+app.use('/api/orders',Order);
 export default app;
