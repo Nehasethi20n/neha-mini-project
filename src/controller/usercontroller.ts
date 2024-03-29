@@ -30,7 +30,7 @@ const secretKey='2a9322e3b32847c91bd8d9f7ade496f7fe14ef79b2e2d4dbf0cc53ebae20d3c
 //             res.status(404).json({ message: "User not found" });
 //         }
 //         const isPasswordValid=await bcrypt.compare(password,user?.password);
-    
+
 export const createUser = async (req: Request, res: Response) => {
     try {
         const { firstName, lastName, email, password } = req.body;
@@ -39,9 +39,16 @@ export const createUser = async (req: Request, res: Response) => {
         if (existingUser) {
             return res.status(400).json({ message: "User already existes" });
         }
-
-        const newUser = await User.create({ firstName, lastName, email, password });
+        console.log(password);
+        let hashedPwd='';
+        await bcrypt.hash(password,10)
+  .then(hash => {
+    hashedPwd=hash;
+    const newUser =User.create({ firstName, lastName, email,password});
         return res.status(201).json({ newUser });
+  })
+  .catch(err => console.error(err.message))
+        
     }
     catch (error) {
         console.error('Error creating user', error);

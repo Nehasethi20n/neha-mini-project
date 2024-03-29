@@ -9,6 +9,7 @@
   },
   "author": "",
   "license": "ISC",
+  
   "dependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/express-session": "^1.18.0",

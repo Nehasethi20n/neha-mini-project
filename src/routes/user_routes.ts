@@ -9,3 +9,4 @@ router.put('/',updateUser);
 router.delete('/',deleteUser);
 
 export default router;
+
