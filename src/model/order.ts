@@ -1,7 +1,7 @@
 import { DataTypes, Model, Optional, Association, Sequelize } from 'sequelize';
 import db from '../config/db';
   class Order extends Model{
-    public order_id!:number;
+    public id!:number;
     public user_id!:number;
     public amount!:number;
   }
