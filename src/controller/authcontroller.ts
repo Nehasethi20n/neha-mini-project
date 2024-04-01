@@ -14,13 +14,15 @@ export const login=async (req:Request, res:Response)=>{
             return res.status(404).json({messsage:"User not found"});
         }
 
-        // const validPass=await bcrypt.compare(password, user.password);
-        // console.log(user.password);
+         const validPass=await bcrypt.compare(password, user.password);
+        console.log(user.password);
         
-            if(user.password!==password) {
+            if(!validPass){ 
+             
                 return res.status(401).json({messsage:"Password not valid"});
             }
-            const accessToken=jwt.sign({"email":user.email},secret,{expiresIn:'60s'});
+            const accessToken=jwt.sign({"email":user.email},secret,{expiresIn:'3600s',});
+    
             return res.json(accessToken);
     }
         catch(error)

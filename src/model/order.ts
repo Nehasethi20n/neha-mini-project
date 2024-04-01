@@ -17,7 +17,7 @@ import db from '../config/db';
        type:DataTypes.INTEGER,
        references:
        {
-        model:"User",
+        model:"user",
         key:"id"
        }
       },
