@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import Order from '../model/order';
+import OrderModel from '../model/order';
 
 export const createOrder = async (req: Request, res: Response) => {
 	try {
 		const { user_id, amount } = req.body;
-		const order = await Order.create({ user_id, amount });
+		const order = await OrderModel.create({ user_id, amount });
 		res.status(201).json(order);
 	} catch (err) {
 		console.error('Error creating order:', console.error);
@@ -14,7 +14,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
 export const getAllOrders = async (req: Request, res: Response) => {
 	try {
-		const orders = await Order.findAll(	);
+		const orders = await OrderModel.findAll(	);
 		res.json(orders);
 	} catch (error) {
 		console.error(error);
@@ -25,7 +25,7 @@ export const getAllOrders = async (req: Request, res: Response) => {
 export const getOrder = async (req: Request, res: Response) => {
 	try {
 		const orderId = req.params.id;
-		const order = await Order.findByPk(orderId?.toString());
+		const order = await OrderModel.findByPk(orderId?.toString());
 		if (!order) {
 			return res.status(404).json({ message: 'Order not available' });
 		}
@@ -41,7 +41,7 @@ export const updateOrder = async (req: Request, res: Response) => {
 	try {
 		const orderId = req.query.id;
 		const { user_id, amount } = req.body;
-		const order = await Order.findByPk(orderId?.toString());
+		const order = await OrderModel.findByPk(orderId?.toString());
 		if (!order) {
 			return res.status(404).json({ message: 'Order not found' });
 		}
@@ -58,7 +58,7 @@ export const deleteOrder = async (req: Request, res: Response) => {
 	try {
 		const orderId = req.query.id;
 
-		const order = await Order.findByPk(orderId?.toString());
+		const order = await OrderModel.findByPk(orderId?.toString());
 		if (!order) {
 			return res.status(404).json({ message: 'Order not available' });
 		}

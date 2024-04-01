@@ -1,46 +1,39 @@
 import { Request, Response } from "express";
 import { Sequelize } from 'sequelize';
-import User from '../model/user';
+import UserModel from '../model/user';
+import {User} from '../interface/userinterface';
+import {validateUserData} from '../validator/uservalidator';
 import {z} from 'zod';
 import * as dotenv from 'dotenv'
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 const secretKey='2a9322e3b32847c91bd8d9f7ade496f7fe14ef79b2e2d4dbf0cc53ebae20d3c32a7d4e9a8b6932513aef15309f11fafb39601f183b927d4d4ce4f167b8a4891c'
-const userSchema= z.object({
-	firstName:z.string().min(1),  
-    lastName:z.string().min(1), 
-    email:z.string().email(),
-    password:z.string().min(6),
-});
 
 export const createUser = async (req: Request, res: Response) => {
     try {
 		
-        const { firstName, lastName, email, password } = req.body;
+		const userData:User=req.body;
 
-        const existingUser = await User.findOne({ where: { email } });
+        const existingUser = await UserModel.findOne({ where: { email:userData.email} });
         if (existingUser) {
             return res.status(400).json({ message: "User already existes" });
         }
-    //const hashedPwd=await bcrypt.hash(password,10);
-    const userData=req.body;
-		const validateData=userSchema.parse(userData);
+    
+		const result=validateUserData(userData);
+        
+		if (!result.isValid) {
+			return res.status(500).json({ message: 'Validation error',errors:result.errors});
+		}
 		
-		const hashedPwd=await bcrypt.hash(validateData.password,10);
-    const newUser =await User.create({ firstName, lastName, email,password:hashedPwd});
+		const hashedPwd=await bcrypt.hash(userData.password,10);
+    const newUser =await UserModel.create({ firstName:userData.firstName, lastName:userData.lastName, email:userData.email,password:hashedPwd});
         return res.status(201).json({ newUser });
     }
-    catch (error) {
-		if(error instanceof z.ZodError){
-			console.error('Validation error', error);
-			return res.status(500).json({ message: 'Validation error',error });
-		}
-		else{
+    catch(error) {
         console.error('Error creating user', error);
         return res.status(500).json({ message: 'Server error' });
 		}
-    }
-};
+    };
 
 export const getUser = async (req: Request, res: Response) => {
 	try {
@@ -50,7 +43,7 @@ export const getUser = async (req: Request, res: Response) => {
 		console.log(req.params);
 
 		console.log(userId);
-		const user = await User.findByPk(userId?.toString());
+		const user = await UserModel.findByPk(userId?.toString());
 
 		console.log(user);
 
@@ -68,21 +61,25 @@ export const getUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
 	try {
 		const userId = req.query.id;
-		const { firstName, lastName, email } = req.body;
 		const userData=req.body;
-		const validateData=userSchema.parse(userData);
-		if(validateData.password)
+		const result=validateUserData(userData);
+        
+		if (!result.isValid) {
+			return res.status(500).json({ message: 'Validation error',errors:result.errors});
+		}
+
+		if(userData.password)
 		{
-			const hashedPwd=await bcrypt.hash(validateData.password,10);
-			validateData.password=hashedPwd;
+			const hashedPwd=await bcrypt.hash(userData.password,10);
+			userData.password=hashedPwd;
 		}
 		
-		const user = await User.findByPk(userId?.toString());
+		const user = await UserModel.findByPk(userId?.toString());
 		if (!user) {
 			return res.status(404).json({ message: 'User not found' });
 		}
 
-		await user.update(validateData);
+		await user.update(userData);
 		res.json({ message: 'User details updated' });
 	} catch (error) {
 		console.error('Error updating user', error);
@@ -93,7 +90,7 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
 	try {
 		const userId = req.query.id;
-		const user = await User.findByPk(userId?.toString());
+		const user = await UserModel.findByPk(userId?.toString());
 		if (!user) {
 			return res.status(404).json({ message: 'User not found' });
 		}

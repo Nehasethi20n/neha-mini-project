@@ -1,7 +1,7 @@
 import { DataTypes, Model, Optional, Association, Sequelize } from 'sequelize';
 import db from '../config/db';
 
-  class User extends Model {
+  class UserModel extends Model {
     public id!: number;
     public firstName!: string;
     public lastName!: string;
@@ -9,7 +9,7 @@ import db from '../config/db';
     public password!: string;
   }
 
-  User.init(
+  UserModel.init(
     {
       id: {
         type: DataTypes.INTEGER,
@@ -41,4 +41,4 @@ import db from '../config/db';
       timestamps:false
     }
   );
-export default User;
+export default UserModel;

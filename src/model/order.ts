@@ -1,11 +1,11 @@
 import { DataTypes, Model, Optional, Association, Sequelize } from 'sequelize';
 import db from '../config/db';
-  class Order extends Model{
+  class OrderModel extends Model{
     public id!:number;
     public user_id!:number;
     public amount!:number;
   }
-  Order.init(
+  OrderModel.init(
     {
       id:{
         type:DataTypes.INTEGER,
@@ -33,4 +33,4 @@ import db from '../config/db';
         timestamps:false
       }
   );
-export default Order;
+export default OrderModel;
